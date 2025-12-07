@@ -1,0 +1,61 @@
+# Rider
+.idea/
+*.sln.iml
+
+# Build outputs
+bin/
+obj/
+publish/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider caches
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/shelf/
+.idea/**/gradle.xml
+
+# VS / Visual Studio
+.vs/
+*.vcxproj.user
+*.dbmdl
+
+# NuGet
+packages/
+*.nupkg
+project.lock.json
+
+# ASP.NET / config
+appsettings*.json
+!appsettings.json           # keep base config if desired
+appsettings.Local.json
+secrets.json
+*.Local.user
+
+# EF Core
+*.db
+*.sqlite
+
+# Logs
+*.log
+
+# Node / front-end
+node_modules/
+
+# Environment files
+.env
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Other sensitive or generated
+*.pem
+*.key
+*.pfx
