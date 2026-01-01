@@ -1,7 +1,7 @@
 using Airbnb.Domain.Abstractions;
 using MediatR;
 
-namespace Airbnb.Application.Abstractions;
+namespace Airbnb.Application.Abstractions.Messaging;
 
 public interface ICommand : IRequest<Result>, IBaseCommand
 {

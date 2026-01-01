@@ -51,7 +51,7 @@ public class Booking : Entity
     {
         var pricingDetails = pricingService.CalculatePrice(apartment, duration);
         
-        // Provera prDetails == null, if true, vrati Result.Failure.. (videt Cgpt resenje)
+        // Provera prDetails == null, if true, vrati Result.Failure.. (videti Cgpt resenje)
         
         var booking = new Booking(
             Guid.NewGuid(),

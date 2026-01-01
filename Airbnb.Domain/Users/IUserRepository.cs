@@ -1,6 +1,4 @@
-using Airbnb.Domain.Users;
-
-namespace Airbnb.Domain.Abstractions;
+namespace Airbnb.Domain.Users;
 
 public interface IUserRepository
 {

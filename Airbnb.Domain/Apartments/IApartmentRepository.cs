@@ -1,4 +1,4 @@
-namespace Airbnb.Domain.Abstractions;
+namespace Airbnb.Domain.Apartments;
 
 public interface IApartmentRepository
 {
