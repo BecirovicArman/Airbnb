@@ -1,4 +1,4 @@
-namespace Airbnb.Domain;
+namespace Airbnb.Domain.Apartments;
 
 public record Address(
     string Country,

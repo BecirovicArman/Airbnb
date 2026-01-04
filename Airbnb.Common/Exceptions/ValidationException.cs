@@ -1,4 +1,4 @@
-namespace Airbnb.Application.Exceptions;
+namespace Airbnb.Common.Exceptions;
 
 public class ValidationException(IEnumerable<ValidationError> errors) : Exception
 {

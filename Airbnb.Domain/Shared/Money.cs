@@ -1,4 +1,4 @@
-namespace Airbnb.Domain;
+namespace Airbnb.Domain.Shared;
 
 public record Money(decimal Amount, Currency Currency)
 {

@@ -1,55 +1,39 @@
 using Airbnb.Application.Abstractions.Clock;
-using Airbnb.Application.Abstractions.Messaging;
+using Airbnb.Common.Exceptions;
 using Airbnb.Domain.Abstractions;
 using Airbnb.Domain.Apartments;
-using Airbnb.Domain.Bookings;
 using Airbnb.Domain.Users;
+using MediatR;
 
 namespace Airbnb.Application.Bookings.ReserveBooking;
 
 internal sealed class ReserveBookingCommandHandler(
     IUserRepository userRepository,
     IApartmentRepository apartmentRepository,
-    IBookingRepository bookingRepository,
     IUnitOfWork unitOfWork,
-    PricingService pricingService,
     IDateTimeProvider dateTimeProvider)
-    : ICommandHandler<ReserveBookingCommand, Guid>
+    : IRequestHandler<ReserveBookingCommand, Guid>
 {
-    public async Task<Result<Guid>> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(ReserveBookingCommand request, CancellationToken cancellationToken)
     {
         var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
 
         if (user is null)
         {
-            return Result.Failure<Guid>(UserErrors.NotFound);
+            throw new NotFoundException(UserErrors.NotFound(request.UserId.ToString()));
         }
 
         var apartment = await apartmentRepository.GetByIdAsync(request.ApartmentId, cancellationToken);
 
         if (apartment is null)
         {
-            return Result.Failure<Guid>(ApartmentErrors.NotFound);
+            throw new NotFoundException(ApartmentErrors.NotFound(request.ApartmentId.ToString()));
         }
-
-        var duration = DateRange.Create(request.StartDate, request.EndDate);
-
-        if (await bookingRepository.IsOverlappingAsync(apartment, duration, cancellationToken))
-        {
-            return Result.Failure<Guid>(BookingErrors.Overlap);
-        }
-
-        var booking = Booking.Reserve(
-            apartment,
-            user.Id,
-            duration,
-            dateTimeProvider.UtcNow,
-            pricingService);
         
-        bookingRepository.Add(booking);
+        var newBookingId = apartment.Book(request.StartDate, request.EndDate, user, dateTimeProvider.UtcNow);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return booking.Id;
+        return newBookingId;
     }
 }

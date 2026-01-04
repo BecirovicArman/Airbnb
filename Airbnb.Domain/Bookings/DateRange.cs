@@ -24,4 +24,9 @@ public record DateRange
             End = end
         };
     }
+
+    public override string ToString()
+    {
+        return $"{Start} - {End}";
+    }
 }

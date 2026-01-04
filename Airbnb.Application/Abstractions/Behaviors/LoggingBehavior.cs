@@ -1,4 +1,3 @@
-using Airbnb.Application.Abstractions.Messaging;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,7 +6,7 @@ namespace Airbnb.Application.Abstractions.Behaviors;
 public class LoggingBehavior<TRequest, TResponse>(
     ILogger<TRequest> logger)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IBaseCommand
+    where TRequest : IBaseRequest
 {
     public async Task<TResponse> Handle(
         TRequest request,
@@ -20,9 +19,7 @@ public class LoggingBehavior<TRequest, TResponse>(
         {
             logger.LogInformation("Executing command {Command}", name);
 
-            // if there are other behaviors -> go to them
-            // if not -> execute the actual CommandHandler
-            var result = await next();
+            var result = await next(cancellationToken);
 
             logger.LogInformation("Command {Command} processed successfully", name);
 

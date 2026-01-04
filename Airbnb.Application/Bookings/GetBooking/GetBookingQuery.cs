@@ -1,5 +1,5 @@
-using Airbnb.Application.Abstractions.Messaging;
+using MediatR;
 
 namespace Airbnb.Application.Bookings.GetBooking;
 
-public sealed record GetBookingQuery(Guid BookingId) : IQuery<BookingResponse>;
+public sealed record GetBookingQuery(Guid BookingId) : IRequest<BookingResponse?>;

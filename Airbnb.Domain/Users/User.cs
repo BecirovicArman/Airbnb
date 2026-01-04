@@ -5,23 +5,21 @@ namespace Airbnb.Domain.Users;
 
 public sealed class User : Entity
 {
-    private User(Guid id, FirstName firstName, LastName lastName, Email email) : base(id)
+    private User(Guid id, string name, string email) : base(id)
     {
-        FirstName = firstName;
-        LastName = lastName;
+        Name = name;
         Email = email;
     }
 
-    public FirstName FirstName { get; private set; }
-    public LastName LastName { get; private set; }
-    public Email Email { get; private set; }
+    public string Name { get; private set; }
+    public string Email { get; private set; }
 
-    public static User Create(FirstName firstName, LastName lastName, Email email)
+    public static User Create(string name, string email)
     {
-        var user = new User(Guid.NewGuid(), firstName, lastName, email);
+        var user = new User(Guid.NewGuid(), name, email);
 
         user.RaiseDomainEvent(new UserCreatedDomainEvent(user.Id));
-        
+
         return user;
     }
 }

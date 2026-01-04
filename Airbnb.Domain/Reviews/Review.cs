@@ -32,7 +32,7 @@ public class Review : Entity
     public Comment Comment { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
 
-    public static Result<Review> Create(
+    public static Review Create(
         Booking booking,
         Rating rating,
         Comment comment,
@@ -40,7 +40,7 @@ public class Review : Entity
     {
         if (booking.Status != BookingStatus.Completed)
         {
-            return Result.Failure<Review>(ReviewErrors.NotEligible);
+            //return Result.Failure<Review>(ReviewErrors.NotEligible);
         }
 
         var review = new Review(

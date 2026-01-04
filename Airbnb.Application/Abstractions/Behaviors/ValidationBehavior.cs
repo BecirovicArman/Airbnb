@@ -1,14 +1,14 @@
-using Airbnb.Application.Abstractions.Messaging;
-using Airbnb.Application.Exceptions;
+using Airbnb.Common.Exceptions;
 using FluentValidation;
 using MediatR;
+using ValidationException = Airbnb.Common.Exceptions.ValidationException;
 
 namespace Airbnb.Application.Abstractions.Behaviors;
 
 public class ValidationBehavior<TRequest, TResponse>(
     IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IBaseCommand
+    where TRequest : IBaseRequest
 {
     public async Task<TResponse> Handle(TRequest request,
         RequestHandlerDelegate<TResponse> next,
@@ -16,25 +16,25 @@ public class ValidationBehavior<TRequest, TResponse>(
     {
         if (!validators.Any())
         {
-            return await next();
+            return await next(cancellationToken);
         }
 
         var context = new ValidationContext<TRequest>(request);
         
         var validationErrors = validators
             .Select(validator => validator.Validate(context))
-            .Where(validationResult => validationResult.Errors.Any())
+            .Where(validationResult => validationResult.Errors.Count != 0)
             .SelectMany(validationResult => validationResult.Errors)
             .Select(validationFailure => new ValidationError(
                 validationFailure.PropertyName,
                 validationFailure.ErrorMessage))
             .ToList();
         
-        if (validationErrors.Any())
+        if (validationErrors.Count != 0)
         {
-            throw new Exceptions.ValidationException(validationErrors);
+            throw new ValidationException(validationErrors);
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }

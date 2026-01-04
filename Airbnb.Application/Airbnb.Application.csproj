@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Airbnb.Common\Airbnb.Common.csproj" />
       <ProjectReference Include="..\Airbnb.Domain\Airbnb.Domain.csproj" />
     </ItemGroup>
 

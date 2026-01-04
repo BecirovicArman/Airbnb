@@ -1,26 +1,23 @@
+using Airbnb.Common.BuildingBlocks;
 using Airbnb.Domain.Abstractions;
 
 namespace Airbnb.Domain.Bookings;
 
 public static class BookingErrors
 {
-    public static Error NotFound = new(
-        "Booking.Found",
-        "The booking with the specified identifier was not found");
+    public static Error NotFound(string bookingId) => new(
+        3001,
+        $"The booking with ID '{bookingId}' was not found.");
+    
+    public static Error NotReserved(string bookingId) => new(
+        3003,
+        $"The booking '{bookingId}' is not in a reserved (pending) state.");
 
-    public static Error Overlap = new(
-        "Booking.Overlap",
-        "The current booking is overlapping with an existing one");
+    public static Error NotConfirmed(string bookingId) => new(
+        3004,
+        $"The booking '{bookingId}' is not confirmed.");
 
-    public static Error NotReserved = new(
-        "Booking.NotReserved",
-        "The booking is not pending");
-
-    public static Error NotConfirmed = new(
-        "Booking.NotReserved",
-        "The booking is not confirmed");
-
-    public static Error AlreadyStarted = new(
-        "Booking.AlreadyStarted",
-        "The booking has already started");
+    public static Error AlreadyStarted(string bookingId) => new(
+        3005,
+        $"The booking '{bookingId}' has already started.");
 }

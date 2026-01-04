@@ -1,5 +1,6 @@
 using Airbnb.Domain.Abstractions;
 using Airbnb.Domain.Bookings.Events;
+using Airbnb.Domain.Shared;
 
 namespace Airbnb.Domain.Bookings;
 
@@ -43,100 +44,85 @@ public class Booking : Entity
     public DateTime? CancelledOnUtc { get; private set; }
 
     public static Booking Reserve(
-        Apartment apartment,
+        Guid apartmentId,
         Guid userId,
         DateRange duration,
         DateTime utcNow,
-        PricingService pricingService)
+        PricingDetails pricingDetails)
     {
-        var pricingDetails = pricingService.CalculatePrice(apartment, duration);
-        
-        // Provera prDetails == null, if true, vrati Result.Failure.. (videti Cgpt resenje)
-        
         var booking = new Booking(
             Guid.NewGuid(),
-            apartment.Id,
+            apartmentId,
             userId,
             duration,
             pricingDetails.PriceForPeriod,
             pricingDetails.CleaningFee,
             pricingDetails.AmenitiesUpCharge,
-            pricingDetails.TotalPrice,
+            pricingDetails.TotalPriceForPeriod,
             BookingStatus.Reserved,
             utcNow);
-        
+
         booking.RaiseDomainEvent(new BookingReservedDomainEvent(booking.Id));
         
-        apartment.LastBookedOnUtc =  utcNow;
-
-        // Moze se vratiti Result.Success(booking)
         return booking;
     }
     
-    public Result Confirm(DateTime utcNow)
+    public void Confirm(DateTime utcNow)
     {
         if (Status != BookingStatus.Reserved)
         {
-            return Result.Failure(BookingErrors.NotReserved);
+            //return Result.Failure(BookingErrors.NotReserved);
         }
 
         Status = BookingStatus.Confirmed;
         ConfirmedOnUtc = utcNow;
 
         RaiseDomainEvent(new BookingConfirmedDomainEvent(Id));
-
-        return Result.Success();
     }
 
-    public Result Reject(DateTime utcNow)
+    public void Reject(DateTime utcNow)
     {
         if (Status != BookingStatus.Reserved)
         {
-            return Result.Failure(BookingErrors.NotReserved);
+            //return Result.Failure(BookingErrors.NotReserved);
         }
 
         Status = BookingStatus.Rejected;
         RejectedOnUtc = utcNow;
 
         RaiseDomainEvent(new BookingRejectedDomainEvent(Id));
-
-        return Result.Success();
     }
 
-    public Result Complete(DateTime utcNow)
+    public void Complete(DateTime utcNow)
     {
         if (Status != BookingStatus.Confirmed)
         {
-            return Result.Failure(BookingErrors.NotConfirmed);
+            //return Result.Failure(BookingErrors.NotConfirmed);
         }
 
         Status = BookingStatus.Completed;
         CompletedOnUtc = utcNow;
 
         RaiseDomainEvent(new BookingCompletedDomainEvent(Id));
-
-        return Result.Success();
     }
 
-    public Result Cancel(DateTime utcNow)
+    public void Cancel(DateTime utcNow)
     {
         if (Status != BookingStatus.Confirmed)
         {
-            return Result.Failure(BookingErrors.NotConfirmed);
+            //return Result.Failure(BookingErrors.NotConfirmed);
         }
 
         var currentDate = DateOnly.FromDateTime(utcNow);
 
         if (currentDate > Duration.Start)
         {
-            return Result.Failure(BookingErrors.AlreadyStarted);
+            //return Result.Failure(BookingErrors.AlreadyStarted);
         }
 
         Status = BookingStatus.Cancelled;
         CancelledOnUtc = utcNow;
 
         RaiseDomainEvent(new BookingCancelledDomainEvent(Id));
-
-        return Result.Success();
     }
 }

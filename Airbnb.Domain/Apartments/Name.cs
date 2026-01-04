@@ -1,3 +1,3 @@
-namespace Airbnb.Domain;
+namespace Airbnb.Domain.Apartments;
 
 public record Name(string Value);
